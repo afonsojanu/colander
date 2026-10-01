@@ -2307,6 +2307,22 @@ class TestBooleanCustomFalseAndTrueReprs(unittest.TestCase):
             self.assertEqual(exc.msg.mapping['true_choices'], "'y', 't'")
 
 
+class TestBooleanCustomMixedCaseReprs(unittest.TestCase):
+    def _makeOne(self):
+        from colander import Boolean
+
+        return Boolean(false_choices=('false', 'N', '0'), true_choices=('true', 'Y'))
+
+    def test_deserialize(self):
+        typ = self._makeOne()
+        node = DummySchemaNode(None)
+        self.assertEqual(typ.deserialize(node, 'N'), False)
+        self.assertEqual(typ.deserialize(node, 'n'), False)
+        self.assertEqual(typ.deserialize(node, 'Y'), True)
+        self.assertEqual(typ.deserialize(node, 'y'), True)
+        self.assertRaises(colander.Invalid, typ.deserialize, node, 'other')
+
+
 class TestBooleanCustomSerializations(unittest.TestCase):
     def _makeOne(self):
         from colander import Boolean

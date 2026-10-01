@@ -5,6 +5,12 @@
 
 - Drop support for Python 3.7.
 
+- Fixed ``colander.Boolean`` comparing a lower-cased input value against
+  ``false_choices``/``true_choices`` values that were not themselves
+  lower-cased, which meant a choice containing an upper-case character
+  (for example ``true_choices=('Y',)``) could never match.
+  See https://github.com/Pylons/colander/issues/282
+
 2.0 (2022-01-02)
 ================
 

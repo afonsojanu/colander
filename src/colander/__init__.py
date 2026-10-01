@@ -1717,6 +1717,13 @@ class Boolean(SchemaType):
         self.true_reprs = ', '.join([repr(c) for c in self.true_choices])
         self.false_reprs = ', '.join([repr(c) for c in self.false_choices])
 
+        # cstruct is lower-cased before being compared against the choices
+        # below, so the choices themselves need to be lower-cased too,
+        # otherwise a choice containing an upper-case letter could never
+        # match an incoming value
+        self._false_choices = [choice.lower() for choice in self.false_choices]
+        self._true_choices = [choice.lower() for choice in self.true_choices]
+
     def serialize(self, node, appstruct):
         if appstruct is null:
             return null
@@ -1735,10 +1742,10 @@ class Boolean(SchemaType):
             )
         result = result.lower()
 
-        if result in self.false_choices:
+        if result in self._false_choices:
             return False
-        elif self.true_choices:
-            if result in self.true_choices:
+        elif self._true_choices:
+            if result in self._true_choices:
                 return True
             else:
                 raise Invalid(
